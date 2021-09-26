@@ -32,6 +32,7 @@ pub struct Parser {
 pub enum Mode {
     Utf8,
     Binary,
+    Custom(TokenStream),
 }
 
 impl Default for Mode {
@@ -128,6 +129,12 @@ impl Parser {
                 ("subpattern", _) => {
                     self.err(r#"Expected: subpattern name = r"regex""#, name.span());
                 }
+                ("source", NestedValue::Assign(ty)) => {
+                    self.mode = Mode::Custom(ty);
+                }
+                ("source", _) => {
+                    self.err("Expected: source = SomeType", name.span());
+                }
                 (unknown, _) => {
                     self.err(
                         format!("Unknown nested attribute: {}", unknown),
@@ -149,7 +156,10 @@ impl Parser {
             Ok(lit) => match lit {
                 Lit::Str(string) => Literal::Utf8(string),
                 Lit::ByteStr(bytes) => {
-                    self.mode = Mode::Binary;
+                    match self.mode {
+                        Mode::Custom(_) => (),
+                        _ => self.mode = Mode::Binary,
+                    }
 
                     Literal::Bytes(bytes)
                 }

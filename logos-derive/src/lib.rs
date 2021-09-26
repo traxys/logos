@@ -286,7 +286,7 @@ pub fn logos(input: TokenStream) -> TokenStream {
 
     // panic!("{:#?}\n\n{} nodes", graph, graph.nodes().iter().filter_map(|n| n.as_ref()).count());
 
-    let generator = Generator::new(name, &this, root, &graph);
+    let generator = Generator::new(name, &this, root, &graph, parser.leaf_suffix.as_ref());
 
     let body = generator.generate();
     let tokens = impl_logos(quote! {

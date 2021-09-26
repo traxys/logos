@@ -26,6 +26,7 @@ pub struct Parser {
     pub mode: Mode,
     pub extras: MaybeVoid,
     pub subpatterns: Subpatterns,
+    pub leaf_suffix: Option<TokenStream>,
     types: TypeParams,
 }
 
@@ -134,6 +135,12 @@ impl Parser {
                 }
                 ("source", _) => {
                     self.err("Expected: source = SomeType", name.span());
+                }
+                ("leaf_suffix", NestedValue::Assign(leaf_suffix)) => {
+                    self.leaf_suffix = Some(leaf_suffix);
+                }
+                ("leaf_suffix", _) => {
+                    self.err("Expected: leaf_suffix = SomeType", name.span());
                 }
                 (unknown, _) => {
                     self.err(

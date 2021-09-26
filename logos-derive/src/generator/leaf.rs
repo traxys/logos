@@ -43,11 +43,18 @@ impl<'a> Generator<'a> {
                 #bump
                 lex.set(#name::#ident);
             },
-            None => quote! {
-                #bump
-                let token = #name::#ident(lex.slice());
-                lex.set(token);
-            },
+            None => match self.leaf_suffix {  
+                None => quote! {
+                    #bump
+                    let token = #name::#ident(lex.slice());
+                    lex.set(token);
+                },
+                Some(sf) => quote! {
+                    #bump
+                    let token = #name::#ident(lex.slice()#sf);
+                    lex.set(token);
+                }
+            }
         }
     }
 }

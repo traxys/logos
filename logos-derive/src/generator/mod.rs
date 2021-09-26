@@ -41,6 +41,7 @@ pub struct Generator<'a> {
     tests: Map<Vec<Range>, Ident>,
     /// Related to above, table stack manages tables that need to be
     tables: TableStack,
+    leaf_suffix: Option<&'a TokenStream>,
 }
 
 impl<'a> Generator<'a> {
@@ -49,6 +50,7 @@ impl<'a> Generator<'a> {
         this: &'a TokenStream,
         root: NodeId,
         graph: &'a Graph<Leaf>,
+        leaf_suffix: Option<&'a TokenStream>,
     ) -> Self {
         let rendered = Self::fast_loop_macro();
         let meta = Meta::analyze(root, graph);
@@ -60,6 +62,7 @@ impl<'a> Generator<'a> {
             graph,
             meta,
             rendered,
+            leaf_suffix,
             fns: Set::default(),
             idents: Map::default(),
             gotos: Map::default(),
